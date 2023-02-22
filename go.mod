@@ -2,7 +2,19 @@ module github.com/go-micro-v4-demo/frontend
 
 go 1.18
 
-require go-micro.dev/v4 v4.9.0
+require (
+	github.com/go-micro-v4-demo/helloworld v0.0.0-20230222162125-be8240653a41
+	github.com/go-micro-v4-demo/user v0.0.0-20230222154440-60604d40cb6e
+	github.com/go-micro/plugins/v4/client/grpc v1.2.0
+	github.com/go-micro/plugins/v4/server/http v1.2.1
+	github.com/gorilla/mux v1.8.0
+	go-micro.dev/v4 v4.9.0
+)
+
+require (
+	google.golang.org/genproto v0.0.0-20211021150943-2b146023228c // indirect
+	google.golang.org/grpc v1.42.0 // indirect
+)
 
 require (
 	github.com/Microsoft/go-winio v0.6.0 // indirect

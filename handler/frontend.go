@@ -3,14 +3,20 @@ package handler
 import (
 	"context"
 	"io"
+	"net/http"
 	"time"
 
 	"go-micro.dev/v4/logger"
 
 	pb "github.com/go-micro-v4-demo/frontend/proto"
+	helloworldPb "github.com/go-micro-v4-demo/helloworld/proto"
+	userPb "github.com/go-micro-v4-demo/user/proto"
 )
 
-type Frontend struct{}
+type Frontend struct {
+	UserService       userPb.UserService
+	HelloworldService helloworldPb.HelloworldService
+}
 
 func (e *Frontend) Call(ctx context.Context, req *pb.CallRequest, rsp *pb.CallResponse) error {
 	logger.Infof("Received Frontend.Call request: %v", req)
@@ -62,4 +68,14 @@ func (e *Frontend) BidiStream(ctx context.Context, stream pb.Frontend_BidiStream
 			return err
 		}
 	}
+}
+
+func (e *Frontend) HomeHandler(w http.ResponseWriter, r *http.Request) {
+	res, err := e.UserService.Call(r.Context(), &userPb.CallRequest{Name: "gsmini@sina.cn"})
+	if err != nil {
+		logger.Infof("Received userService.Call request: %v", err)
+		w.Write([]byte("gsmini@sina.cn"))
+	}
+
+	w.Write([]byte(res.Msg))
 }

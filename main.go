@@ -7,6 +7,9 @@ import (
 	userPb "github.com/go-micro-v4-demo/user/proto"
 	mgrpc "github.com/go-micro/plugins/v4/client/grpc"
 	mhttp "github.com/go-micro/plugins/v4/server/http"
+	regs "go-micro.dev/v4/registry"
+	"go-micro.dev/v4/util/log"
+
 	"github.com/gorilla/mux"
 	"go-micro.dev/v4"
 	"go-micro.dev/v4/logger"
@@ -20,13 +23,31 @@ var (
 
 func main() {
 	// Create service
+
+	reg := regs.NewMemoryRegistry() //内存registry
+	if err := reg.Register(&regs.Service{
+		Name:    "user",
+		Version: "latest",
+		Nodes: []*regs.Node{
+			{
+				//k8s pod ip
+				Address: "10.32.0.3:8080",
+			},
+			{ // k8s pod ip
+				Address: "10.38.0.1:8080",
+			},
+		},
+	}); err != nil {
+		log.Fatalf("registry failed, err: %v", err)
+	}
 	srv := micro.NewService(
 		micro.Server(mhttp.NewServer()),
 		micro.Client(mgrpc.NewClient()))
 	srv.Init(
 		micro.Name(service),
 		micro.Version(version),
-		micro.Address("127.0.0.1:8000"), //对外暴漏8000端口
+		micro.Address("0.0.0.0:8080"), //对外暴漏8000端口
+		micro.Registry(reg),
 	)
 	client := srv.Client()
 	svc := &handler.Frontend{

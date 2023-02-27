@@ -1,22 +1,21 @@
 FROM golang:alpine AS builder
 
-# Set Go env
-ENV CGO_ENABLED=0 GOOS=linux
-WORKDIR /go/src/frontend
+ENV GO111MODULE=on \
+    GOPROXY=https://goproxy.cn,direct \
+    GIN_MODE=release \
+    PORT=80 \
+    CGO_ENABLED=0 \
+    GOOS=linux
+WORKDIR /build
 
-# Install dependencies
-RUN apk --update --no-cache add ca-certificates gcc libtool make musl-dev protoc git
+COPY . ./
+#build出二进制文件app
+RUN go build -o app .
 
-# Build Go binary
-COPY Makefile go.mod go.sum ./
-RUN make init && go mod download 
-COPY . .
-RUN make proto tidy build
-
-# Deployment container
-FROM scratch
-
-COPY --from=builder /etc/ssl/certs /etc/ssl/certs
-COPY --from=builder /go/src/frontend/frontend /frontend
-ENTRYPOINT ["/frontend"]
-CMD []
+FROM alpine:latest
+#第二段打包
+COPY --from=builder /build/app /
+#项目端口
+EXPOSE 8080
+#以二进制方式执行
+ENTRYPOINT ["/app"]

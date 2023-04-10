@@ -8,12 +8,15 @@ require (
 	github.com/go-micro/plugins/v4/client/grpc v1.2.0
 	github.com/go-micro/plugins/v4/server/http v1.2.1
 	github.com/gorilla/mux v1.8.0
-	go-micro.dev/v4 v4.9.0
+	github.com/gsmini/k8s-headless-svc v0.0.0-00010101000000-000000000000
+	go-micro.dev/v4 v4.10.0
+
 )
 
 require (
-	google.golang.org/genproto v0.0.0-20211021150943-2b146023228c // indirect
-	google.golang.org/grpc v1.42.0 // indirect
+	google.golang.org/genproto v0.0.0-20230306155012-7f2fa6fef1f4 // indirect
+	google.golang.org/grpc v1.53.0 // indirect
+
 )
 
 require (
@@ -53,13 +56,16 @@ require (
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	golang.org/x/crypto v0.6.0 // indirect
-	golang.org/x/mod v0.8.0 // indirect
-	golang.org/x/net v0.7.0 // indirect
+	golang.org/x/mod v0.9.0 // indirect
+	golang.org/x/net v0.8.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
-	golang.org/x/sys v0.5.0 // indirect
-	golang.org/x/text v0.7.0 // indirect
-	golang.org/x/tools v0.6.0 // indirect
+	golang.org/x/sys v0.6.0 // indirect
+	golang.org/x/text v0.8.0 // indirect
+	golang.org/x/tools v0.7.0 // indirect
 	google.golang.org/protobuf v1.28.1
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
+
 )
+
+replace github.com/gsmini/k8s-headless-svc => /Users/xiongyao/gsmini@sina.cn/k8s-headless-svc

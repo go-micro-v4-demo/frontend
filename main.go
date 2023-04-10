@@ -7,10 +7,8 @@ import (
 	userPb "github.com/go-micro-v4-demo/user/proto"
 	mgrpc "github.com/go-micro/plugins/v4/client/grpc"
 	mhttp "github.com/go-micro/plugins/v4/server/http"
-	regs "go-micro.dev/v4/registry"
-	"go-micro.dev/v4/util/log"
-
 	"github.com/gorilla/mux"
+	svc2 "github.com/gsmini/k8s-headless-svc"
 	"go-micro.dev/v4"
 	"go-micro.dev/v4/logger"
 	"net/http"
@@ -21,37 +19,30 @@ var (
 	version = "latest"
 )
 
-func main() {
-	// Create service
+const K8sSvcName = "user-svc"
 
-	reg := regs.NewMemoryRegistry() //内存registry
-	if err := reg.Register(&regs.Service{
-		Name:    "user",
-		Version: "latest",
-		Nodes: []*regs.Node{
-			{
-				//k8s pod ip
-				Address: "10.32.0.3:8080",
-			},
-			{ // k8s pod ip
-				Address: "10.38.0.1:8080",
-			},
-		},
-	}); err != nil {
-		log.Fatalf("registry failed, err: %v", err)
-	}
+// https://juejin.cn/post/6877424913775329287/
+// k8s 插件是是需要k8s 客户端的很冗余 需要client访问apiserver
+// 要么仿造k8s 插件写一个 要么机遇mdns自定义封装一个
+// 核心思想是去解析svc headless 然后解析返回的endpoint
+// NewRegistry returns a new mdns registry.
+
+func main() {
+	xx := &svc2.Service{Namespace: "order", SvcName: "user-info", PodPort: 9090}
+	reg := svc2.NewRegistry([]*svc2.Service{xx})
 	srv := micro.NewService(
-		micro.Server(mhttp.NewServer()),
-		micro.Client(mgrpc.NewClient()))
+		micro.Server(mhttp.NewServer()), //当前服务的类型 http 对外提供http
+		micro.Client(mgrpc.NewClient())) //当前client的类型grpc 对内调用grpc
 	srv.Init(
 		micro.Name(service),
 		micro.Version(version),
-		micro.Address("0.0.0.0:8080"), //对外暴漏8000端口
+		micro.Address("0.0.0.0:8081"), //对外暴漏8000端口
 		micro.Registry(reg),
 	)
 	client := srv.Client()
 	svc := &handler.Frontend{
-		UserService:       userPb.NewUserService("user", client),
+		// todo 在多个服务的情况是是否能和k8s-headeless-svc对上
+		UserService:       userPb.NewUserService("user-info", client),
 		HelloworldService: helloworldPb.NewHelloworldService("helloworld", client),
 	}
 	r := mux.NewRouter()

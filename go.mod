@@ -8,7 +8,7 @@ require (
 	github.com/go-micro/plugins/v4/client/grpc v1.2.0
 	github.com/go-micro/plugins/v4/server/http v1.2.1
 	github.com/gorilla/mux v1.8.0
-	github.com/gsmini/k8s-headless-svc v0.0.0-00010101000000-000000000000
+	github.com/gsmini/k8s-headless-svc v0.0.0-20230411041717-3b2c083006cd
 	go-micro.dev/v4 v4.10.0
 
 )
@@ -68,4 +68,4 @@ require (
 
 )
 
-replace github.com/gsmini/k8s-headless-svc => /Users/xiongyao/gsmini@sina.cn/k8s-headless-svc
+//replace github.com/gsmini/k8s-headless-svc => /Users/xiongyao/gsmini@sina.cn/k8s-headless-svc

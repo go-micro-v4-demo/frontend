@@ -8,7 +8,7 @@ import (
 	mgrpc "github.com/go-micro/plugins/v4/client/grpc"
 	mhttp "github.com/go-micro/plugins/v4/server/http"
 	"github.com/gorilla/mux"
-	svc2 "github.com/gsmini/k8s-headless-svc"
+	k8sHeadlessSvc "github.com/gsmini/k8s-headless-svc"
 	"go-micro.dev/v4"
 	"go-micro.dev/v4/logger"
 	"net/http"
@@ -26,10 +26,12 @@ const K8sSvcName = "user-svc"
 // 要么仿造k8s 插件写一个 要么机遇mdns自定义封装一个
 // 核心思想是去解析svc headless 然后解析返回的endpoint
 // NewRegistry returns a new mdns registry.
-
+const UserSvcName = "user-info"       //user模块在k8s service中的metadata.name的名字
+const HelloWordSvcName = "helloworld" //user模块在k8s service中的metadata.name的名字
 func main() {
-	xx := &svc2.Service{Namespace: "order", SvcName: "user-info", PodPort: 9090}
-	reg := svc2.NewRegistry([]*svc2.Service{xx})
+	UserSvc := &k8sHeadlessSvc.Service{Namespace: "default", SvcName: UserSvcName, PodPort: 9090}
+	HelloWordSvc := &k8sHeadlessSvc.Service{Namespace: "default", SvcName: HelloWordSvcName, PodPort: 9090}
+	reg := k8sHeadlessSvc.NewRegistry([]*k8sHeadlessSvc.Service{UserSvc, HelloWordSvc})
 	srv := micro.NewService(
 		micro.Server(mhttp.NewServer()), //当前服务的类型 http 对外提供http
 		micro.Client(mgrpc.NewClient())) //当前client的类型grpc 对内调用grpc
@@ -41,8 +43,7 @@ func main() {
 	)
 	client := srv.Client()
 	svc := &handler.Frontend{
-		// todo 在多个服务的情况是是否能和k8s-headeless-svc对上
-		UserService:       userPb.NewUserService("user-info", client),
+		UserService:       userPb.NewUserService(UserSvcName, client),
 		HelloworldService: helloworldPb.NewHelloworldService("helloworld", client),
 	}
 	r := mux.NewRouter()

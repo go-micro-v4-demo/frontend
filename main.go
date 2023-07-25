@@ -19,26 +19,23 @@ var (
 	version = "latest"
 )
 
-const K8sSvcName = "user-svc"
-
-// https://juejin.cn/post/6877424913775329287/
-// k8s 插件是是需要k8s 客户端的很冗余 需要client访问apiserver
-// 要么仿造k8s 插件写一个 要么机遇mdns自定义封装一个
-// 核心思想是去解析svc headless 然后解析返回的endpoint
+// k8s plug-in Yes Yes The k8s client is redundant and requires the client to access apiserver
+// Either copy k8s plugin to write one or mdns custom package one
+// The core idea is to parse svc headless and then parse the returned endpoint
 // NewRegistry returns a new mdns registry.
-const UserSvcName = "user-svc"        //user模块在k8s service中的metadata.name的名字
-const HelloWordSvcName = "helloworld" //user模块在k8s service中的metadata.name的名字
+const UserSvcName = "user-svc"        // The name of the user module in the k8s service metadata.name
+const HelloWordSvcName = "helloworld" //The name of the helloworld module in the k8s service metadata.name
 func main() {
 	UserSvc := &k8sHeadlessSvc.Service{Namespace: "default", SvcName: UserSvcName, PodPort: 8080}
 	//HelloWordSvc := &k8sHeadlessSvc.Service{Namespace: "default", SvcName: HelloWordSvcName, PodPort: 9090}
 	reg := k8sHeadlessSvc.NewRegistry([]*k8sHeadlessSvc.Service{UserSvc})
 	srv := micro.NewService(
-		micro.Server(mhttp.NewServer()), //当前服务的类型 http 对外提供http
-		micro.Client(mgrpc.NewClient())) //当前client的类型grpc 对内调用grpc
+		micro.Server(mhttp.NewServer()), // Type of the current service http   is provided externally
+		micro.Client(mgrpc.NewClient())) // Type of the current client grpc calls grpc internally
 	srv.Init(
 		micro.Name(service),
 		micro.Version(version),
-		micro.Address("0.0.0.0:8080"), //对外暴漏8000端口
+		micro.Address("0.0.0.0:8080"),
 		micro.Registry(reg),
 	)
 	client := srv.Client()
@@ -48,9 +45,9 @@ func main() {
 	}
 	r := mux.NewRouter()
 	r.HandleFunc("/index", svc.HomeHandler).Methods(http.MethodGet)
-	//反爬虫
+	//spider
 	r.HandleFunc("/robots.txt", func(w http.ResponseWriter, _ *http.Request) { fmt.Fprint(w, "User-agent: *\nDisallow: /") })
-	//健康检查
+	//health check
 	r.HandleFunc("/_healthz", func(w http.ResponseWriter, _ *http.Request) { fmt.Fprint(w, "ok") })
 
 	var httpHandler http.Handler = r

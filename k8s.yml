@@ -1,14 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  # 换成对应的服务名
   name: frontend
   namespace: default
   labels:
     app: frontend
 spec:
   replicas: 1
-  # 选定需要管理的 Pod 标签
   selector:
     matchLabels:
       app: frontend
@@ -48,7 +46,6 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  # 服务命名规则：统一在末尾加"-svc"
   name: frontend-svc
   namespace: default
 spec:

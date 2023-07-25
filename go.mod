@@ -4,19 +4,13 @@ go 1.18
 
 require (
 	github.com/go-micro-v4-demo/helloworld v0.0.0-20230222162125-be8240653a41
-	github.com/go-micro-v4-demo/user v0.0.0-20230222154440-60604d40cb6e
-	github.com/go-micro/plugins/v4/client/grpc v1.2.0
-	github.com/go-micro/plugins/v4/server/http v1.2.1
-	github.com/gorilla/mux v1.8.0
-	github.com/gsmini/k8s-headless-svc v0.0.0-20230411041717-3b2c083006cd
-	go-micro.dev/v4 v4.10.0
-
-)
-
-require (
-	google.golang.org/genproto v0.0.0-20230306155012-7f2fa6fef1f4 // indirect
-	google.golang.org/grpc v1.53.0 // indirect
-
+	github.com/go-micro-v4-demo/user v0.0.0-20230227075954-6f34b5ff6b87
+	github.com/go-micro/plugins/v4/client/grpc v1.2.1
+	github.com/go-micro/plugins/v4/server/http v1.2.2
+	github.com/gorilla/mux v1.7.3
+	github.com/gsmini/k8s-headless-svc v1.1.4
+	go-micro.dev/v4 v4.10.2
+	google.golang.org/protobuf v1.28.1
 )
 
 require (
@@ -49,6 +43,7 @@ require (
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
 	github.com/pjbgf/sha1cd v0.2.3 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/rogpeppe/go-internal v1.11.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/sergi/go-diff v1.3.1 // indirect
 	github.com/skeema/knownhosts v1.1.0 // indirect
@@ -62,10 +57,8 @@ require (
 	golang.org/x/sys v0.6.0 // indirect
 	golang.org/x/text v0.8.0 // indirect
 	golang.org/x/tools v0.7.0 // indirect
-	google.golang.org/protobuf v1.28.1
+	google.golang.org/genproto v0.0.0-20230306155012-7f2fa6fef1f4 // indirect
+	google.golang.org/grpc v1.53.0 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
-
 )
-
-//replace github.com/gsmini/k8s-headless-svc => /Users/xiongyao/gsmini@sina.cn/k8s-headless-svc

@@ -26,25 +26,25 @@ const K8sSvcName = "user-svc"
 // 要么仿造k8s 插件写一个 要么机遇mdns自定义封装一个
 // 核心思想是去解析svc headless 然后解析返回的endpoint
 // NewRegistry returns a new mdns registry.
-const UserSvcName = "user-info"       //user模块在k8s service中的metadata.name的名字
+const UserSvcName = "user-svc"        //user模块在k8s service中的metadata.name的名字
 const HelloWordSvcName = "helloworld" //user模块在k8s service中的metadata.name的名字
 func main() {
-	UserSvc := &k8sHeadlessSvc.Service{Namespace: "default", SvcName: UserSvcName, PodPort: 9090}
-	HelloWordSvc := &k8sHeadlessSvc.Service{Namespace: "default", SvcName: HelloWordSvcName, PodPort: 9090}
-	reg := k8sHeadlessSvc.NewRegistry([]*k8sHeadlessSvc.Service{UserSvc, HelloWordSvc})
+	UserSvc := &k8sHeadlessSvc.Service{Namespace: "default", SvcName: UserSvcName, PodPort: 8080}
+	//HelloWordSvc := &k8sHeadlessSvc.Service{Namespace: "default", SvcName: HelloWordSvcName, PodPort: 9090}
+	reg := k8sHeadlessSvc.NewRegistry([]*k8sHeadlessSvc.Service{UserSvc})
 	srv := micro.NewService(
 		micro.Server(mhttp.NewServer()), //当前服务的类型 http 对外提供http
 		micro.Client(mgrpc.NewClient())) //当前client的类型grpc 对内调用grpc
 	srv.Init(
 		micro.Name(service),
 		micro.Version(version),
-		micro.Address("0.0.0.0:8081"), //对外暴漏8000端口
+		micro.Address("0.0.0.0:8080"), //对外暴漏8000端口
 		micro.Registry(reg),
 	)
 	client := srv.Client()
 	svc := &handler.Frontend{
 		UserService:       userPb.NewUserService(UserSvcName, client),
-		HelloworldService: helloworldPb.NewHelloworldService("helloworld", client),
+		HelloworldService: helloworldPb.NewHelloworldService(HelloWordSvcName, client),
 	}
 	r := mux.NewRouter()
 	r.HandleFunc("/index", svc.HomeHandler).Methods(http.MethodGet)
